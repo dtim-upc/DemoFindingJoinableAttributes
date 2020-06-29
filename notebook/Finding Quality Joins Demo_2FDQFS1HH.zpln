@@ -1,0 +1,1742 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\nThis is a demo for finding quality joinable attributes in scala (based on Spark 2.x).  First we need to clarifiy serveral basic concepts of Spark SQL\n* **SparkSession**   - This is the entry point of Spark SQL, you need use `SparkSession` to create DataFrame/Dataset, register UDF, query table and etc.\n* **DataFrame**      - DataFrame is a data structure to save collection of data with a known schema\n\nTo run this demo, it is necessary to replace spark sql jars for the provided spark sql jars.",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-29 00:12:07.132",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003cp\u003eThis is a demo for finding quality joinable attributes in scala (based on Spark 2.x).  First we need to clarifiy serveral basic concepts of Spark SQL\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eSparkSession\u003c/strong\u003e   - This is the entry point of Spark SQL, you need use \u003ccode\u003eSparkSession\u003c/code\u003e to create DataFrame/Dataset, register UDF, query table and etc.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eDataFrame\u003c/strong\u003e      - DataFrame is a data structure. It has the structure schema of a dataset\u003c/li\u003e\n\u003c/ul\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593123515292_-914794666",
+      "id": "paragraph_1593123515292_-914794666",
+      "dateCreated": "2020-06-26 00:18:35.292",
+      "dateStarted": "2020-06-26 01:20:55.692",
+      "dateFinished": "2020-06-26 01:20:56.540",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Set up",
+      "text": "import org.apache.spark.sql.{DataFrame, Row}\nimport org.apache.spark.sql.FQJ\n\n\nval path \u003d \"/Users/javierflores/Music/Notebooks/Demo_FQJ/datasets\"\n\n\ndef readDataset(filename: String):DataFrame \u003d {\n    \n    // read datasets into dataframe\n    spark.read\n      .option(\"header\", \"true\").option(\"inferSchema\", \"true\")\n      .option(\"quote\", \"\\\"\").option(\"escape\", \"\\\"\")\n      .csv(s\"$path/$filename\")\n}\n\n\n// read csv with a list of csv names\nval datasetsNames \u003d spark.read.option(\"header\", \"true\")\n                        .option(\"inferSchema\", \"true\")\n                        .csv(s\"${path}/datasetNames.csv\")\n                        \n\nvar mapDS \u003d Map[String, DataFrame]()\n\n\ndatasetsNames.select(\"filename\").collect()\n.foreach{\n    case Row( filename: String) \u003d\u003e \n        mapDS \u003d mapDS + (filename -\u003e readDataset(filename))\n}\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-28 17:22:10.770",
+      "config": {
+        "colWidth": 6.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "id": "string",
+                      "name": "string",
+                      "age": "string",
+                      "country": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "tableHide": false,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "import org.apache.spark.sql.{DataFrame, Row}\nimport org.apache.spark.sql.FQJ\n\u001b[1m\u001b[34mpath\u001b[0m: \u001b[1m\u001b[32mString\u001b[0m \u003d /Users/javierflores/Music/Notebooks/Demo_FQJ/datasets\n\u001b[1m\u001b[34mreadDataset\u001b[0m: \u001b[1m\u001b[32m(filename: String)org.apache.spark.sql.DataFrame\u001b[0m\n\u001b[1m\u001b[34mdatasetsNames\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m \u003d [id: int, filename: string]\n\u001b[1m\u001b[34mmapDS\u001b[0m: \u001b[1m\u001b[32mscala.collection.immutable.Map[String,org.apache.spark.sql.DataFrame]\u001b[0m \u003d Map(acquisitions.csv -\u003e [AcquisitionID: string, AcquisitionMonth: string ... 8 more fields], countries_and_continents.csv -\u003e [name: string, official_name_en: string ... 23 more fields], netflix_titles.csv -\u003e [show_id: string, type: string ... 10 more fields], wikipedia-iso-country-codes.csv -\u003e [English_short_name_lower_case: str..."
+          }
+        ]
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593120660089_-244391922",
+      "id": "paragraph_1593120660089_-244391922",
+      "dateCreated": "2020-06-25 23:31:00.089",
+      "dateStarted": "2020-06-28 17:22:11.069",
+      "dateFinished": "2020-06-28 17:22:31.770",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Movies.csv",
+      "text": "\n\nprintln(s\"Number of attributes: ${mapDS(\"netflix_titles.csv\").schema.names.size}\")\n\n\nz.show(mapDS(\"movies.csv\"))\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-29 00:08:03.181",
+      "config": {
+        "colWidth": 6.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Dataset_name": "string",
+                      "Attribute_name": "string",
+                      "frequency_avg": "string",
+                      "frequency_min": "string",
+                      "frequency_max": "string",
+                      "frequency_sd": "string",
+                      "val_pct_std": "string",
+                      "frequency_2qo": "string",
+                      "frequency_4qo": "string",
+                      "frequency_6qo": "string",
+                      "frequency_1qo": "string",
+                      "frequency_3qo": "string",
+                      "frequency_5qo": "string",
+                      "frequency_7qo": "string",
+                      "entropy": "string",
+                      "FrequentWords": "string",
+                      "FrequentWordsInSoundex": "string",
+                      "dataType": "string",
+                      "PctAlphabetic": "string",
+                      "PctDateTime": "string",
+                      "PctAlphanumeric": "string",
+                      "PctNumeric": "string",
+                      "PctNonAlphanumeric": "string",
+                      "specificType": "string",
+                      "PctPhones": "string",
+                      "PctEmail": "string",
+                      "PctIP": "string",
+                      "PctURL": "string",
+                      "PctUsername": "string",
+                      "PctGeneral": "string",
+                      "PctOthers": "string",
+                      "PctSpaces": "string",
+                      "PctPhrases": "string",
+                      "cardinality": "string",
+                      "incompleteness": "string",
+                      "len_max_word": "string",
+                      "len_min_word": "string",
+                      "len_avg_word": "string",
+                      "firstWord": "string",
+                      "lastWord": "string",
+                      "AvgNumberWords": "string",
+                      "MinNumberWords": "string",
+                      "MaxNumberWords": "string",
+                      "SdNumberWords": "string",
+                      "numberWords": "string",
+                      "uniqueness": "string",
+                      "val_pct_min": "string",
+                      "val_pct_max": "string",
+                      "frequency_IQR": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false
+            },
+            "helium": {}
+          }
+        },
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "editorHide": true,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Number of attributes: 12\n\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "budget\tcompany\tcountry\tdirector\tgenre\tgross\tname\trating\treleased\truntime\tscore\tstar\tvotes\twriter\tyear\n8000000.0\tColumbia Pictures Corporation\tUSA\tRob Reiner\tAdventure\t5.2287414E7\tStand by Me\tR\t1986-08-22\t89\t8.1\tWil Wheaton\t299174\tStephen King\t1986\n6000000.0\tParamount Pictures\tUSA\tJohn Hughes\tComedy\t7.0136369E7\tFerris Bueller\u0027s Day Off\tPG-13\t1986-06-11\t103\t7.8\tMatthew Broderick\t264740\tJohn Hughes\t1986\n1.5E7\tParamount Pictures\tUSA\tTony Scott\tAction\t1.79800601E8\tTop Gun\tPG\t1986-05-16\t110\t6.9\tTom Cruise\t236909\tJim Cash\t1986\n1.85E7\tTwentieth Century Fox Film Corporation\tUSA\tJames Cameron\tAction\t8.5160248E7\tAliens\tR\t1986-07-18\t137\t8.4\tSigourney Weaver\t540152\tJames Cameron\t1986\n9000000.0\tWalt Disney Pictures\tUSA\tRandal Kleiser\tAdventure\t1.8564613E7\tFlight of the Navigator\tPG\t1986-08-01\t90\t6.9\tJoey Cramer\t36636\tMark H. Baker\t1986\n6000000.0\tHemdale\tUK\tOliver Stone\tDrama\t1.38530565E8\tPlatoon\tR\t1987-02-06\t120\t8.1\tCharlie Sheen\t317585\tOliver Stone\t1986\n2.5E7\tHenson Associates (HA)\tUK\tJim Henson\tAdventure\t1.2729917E7\tLabyrinth\tPG\t1986-06-27\t101\t7.4\tDavid Bowie\t102879\tDennis Lee\t1986\n6000000.0\tDe Laurentiis Entertainment Group (DEG)\tUSA\tDavid Lynch\tDrama\t8551228.0\tBlue Velvet\tR\t1986-10-23\t120\t7.8\tIsabella Rossellini\t146768\tDavid Lynch\t1986\n9000000.0\tParamount Pictures\tUSA\tHoward Deutch\tComedy\t4.0471663E7\tPretty in Pink\tPG-13\t1986-02-28\t96\t6.8\tMolly Ringwald\t60565\tJohn Hughes\t1986\n1.5E7\tSLM Production Group\tUSA\tDavid Cronenberg\tDrama\t4.0456565E7\tThe Fly\tR\t1986-08-15\t96\t7.5\tJeff Goldblum\t129698\tGeorge Langelaan\t1986\n8800000.0\tRimfire Films\tAustralia\tPeter Faiman\tAdventure\t1.74635E8\tCrocodile Dundee\tPG-13\t1986-09-26\t97\t6.5\tPaul Hogan\t79465\tKen Shadie\t1986\n1.6E7\tThorn EMI Screen Entertainment\tUK\tRussell Mulcahy\tAction\t5900000.0\tHighlander\tR\t1986-03-07\t116\t7.2\tChristopher Lambert\t104860\tGregory Widen\t1986\n6000000.0\tTwentieth Century Fox Film Corporation\tUSA\tDavid Seltzer\tComedy\t8200000.0\tLucas\tPG-13\t1986-03-28\t100\t6.8\tCorey Haim\t12228\tDavid Seltzer\t1986\n2.5E7\tTwentieth Century Fox Film Corporation\tUSA\tJohn Carpenter\tAction\t1.11E7\tBig Trouble in Little China\tPG-13\t1986-07-02\t99\t7.3\tKurt Russell\t101678\tGary Goldman\t1986\n1.5E7\tDe Laurentiis Entertainment Group (DEG)\tUSA\tMichael Mann\tCrime\t8620929.0\tManhunter\tR\t1986-08-15\t120\t7.2\tWilliam Petersen\t54000\tThomas Harris\t1986\n1.7E7\tProducers Sales Organization (PSO)\tUSA\tAdrian Lyne\tDrama\t6734844.0\t9� Weeks\tR\t1986-02-21\t117\t5.9\tMickey Rourke\t31798\tElizabeth McNeill\t1986\n1.0E7\tDe Laurentiis Entertainment Group (DEG)\tUSA\tStephen King\tAction\t7433663.0\tMaximum Overdrive\tR\t1986-07-25\t98\t5.4\tEmilio Estevez\t24881\tStephen King\t1986\n2.5E7\tGeffen Company, The\tUSA\tFrank Oz\tComedy\t3.8747385E7\tLittle Shop of Horrors\tPG-13\t1986-12-19\t94\t6.9\tRick Moranis\t53327\tHoward Ashman\t1986\n2700000.0\tNew Century Entertainment Corporation\tUSA\tMike Marvin\tAction\t3500000.0\tThe Wraith\tPG-13\t1986-11-21\t93\t5.9\tCharlie Sheen\t11635\tMike Marvin\t1986\n3.5E7\tUniversal Pictures\tUSA\tWillard Huyck\tAction\t1.6295774E7\tHoward the Duck\tPG\t1986-08-01\t110\t4.6\tLea Thompson\t36020\tSteve Gerber\t1986\n2000000.0\tNew Line Cinema\tUSA\tStephen Herek\tAction\t1.3167232E7\tCritters\tPG-13\t1986-04-11\t82\t6.0\tDee Wallace\t25517\tDomonic Muir\t1986\n1.1E7\tOrion Pictures\tUSA\tAlan Metter\tComedy\t9.1258E7\tBack to School\tPG-13\t1986-06-13\t96\t6.6\tRodney Dangerfield\t23120\tRodney Dangerfield\t1986\n4700000.0\tCannon Films\tUSA\tTobe Hooper\tComedy\t8025872.0\tThe Texas Chainsaw Massacre 2\tUNRATED\t1986-08-22\t89\t5.6\tDennis Hopper\t21253\tL.M. Kit Carson\t1986\n1.5E7\tJay Weston Productions\tUSA\tClint Eastwood\tAction\t4.2724017E7\tHeartbreak Ridge\tR\t1986-12-05\t130\t6.8\tClint Eastwood\t32954\tJames Carabatsos\t1986\n2.5E7\tParamount Pictures\tUSA\tLeonard Nimoy\tAdventure\t1.09713132E8\tStar Trek IV: The Voyage Home\tPG\t1986-11-26\t119\t7.3\tWilliam Shatner\t66366\tGene Roddenberry\t1986\n0.0\tTriStar Pictures\tUSA\tJohn Badham\tComedy\t4.0697761E7\tShort Circuit\tPG\t1986-05-09\t98\t6.6\tAlly Sheedy\t47068\tS.S. Wilson\t1986\n0.0\tNeue Constantin Film\tItaly\tJean-Jacques Annaud\tCrime\t7153487.0\tThe Name of the Rose\tR\t1986-09-24\t130\t7.8\tSean Connery\t86991\tUmberto Eco\t1986\n0.0\tTriStar Pictures\tUSA\tSidney J. Furie\tAction\t2.4159872E7\tIron Eagle\tPG-13\t1986-01-17\t117\t5.3\tLouis Gossett Jr.\t11304\tKevin Alyn Elders\t1986\n2.5E7\tParamount Pictures\tUSA\tMichael Ritchie\tAction\t7.9817937E7\tThe Golden Child\tPG-13\t1986-12-12\t94\t5.9\tEddie Murphy\t42997\tDennis Feldman\t1986\n1900000.0\tHemdale\tUSA\tTim Hunter\tCrime\t4600000.0\tRiver\u0027s Edge\tR\t1987-05-08\t99\t7.1\tCrispin Glover\t12862\tNeal Jimenez\t1986\n2.5E7\tL.A. Films\tUSA\tJohn Landis\tComedy\t3.9246734E7\t�Three Amigos!\tPG\t1986-12-12\t104\t6.4\tSteve Martin\t57406\tSteve Martin\t1986\n2.5E7\tWarner Bros.\tUSA\tGeorge P. Cosmatos\tAction\t4.9042224E7\tCobra\tR\t1986-05-23\t87\t5.7\tSylvester Stallone\t54851\tPaula Gosling\t1986\n0.0\tGaumont\tFrance\tJean-Jacques Beineix\tDrama\t2003822.0\tBetty Blue\tNot specified\t1986-11-07\t120\t7.4\tJean-Hugues Anglade\t14562\tPhilippe Djian\t1986\n2.45E7\tWarner Bros.\tUK\tRoland Joff�\tAdventure\t1.7218023E7\tThe Mission\tPG\t1986-10-31\t125\t7.5\tRobert De Niro\t47497\tRobert Bolt\t1986\n1.38E7\tTouchstone Pictures\tUSA\tMartin Scorsese\tDrama\t5.2293982E7\tThe Color of Money\tR\t1986-10-17\t119\t7.0\tPaul Newman\t62495\tWalter Tevis\t1986\n0.0\tColumbia Pictures Corporation\tUSA\tJohn G. Avildsen\tAction\t1.15103979E8\tThe Karate Kid Part II\tPG\t1986-06-20\t113\t5.9\tPat Morita\t58370\tRobert Mark Kamen\t1986\n0.0\tLorimar Productions\tUSA\tNick Castle\tDrama\t7177431.0\tThe Boy Who Could Fly\tPG\t1986-09-26\t114\t6.5\tLucy Deakins\t4623\tNick Castle\t1986\n6000000.0\tHBO Films\tUSA\tRobert Harmon\tThriller\t5844868.0\tThe Hitcher\tR\t1986-02-21\t97\t7.3\tRutger Hauer\t36191\tEric Red\t1986\n1.0E7\tAmblin Entertainment\tUSA\tRichard Benjamin\tComedy\t3.7499651E7\tThe Money Pit\tPG\t1986-03-26\t91\t6.3\tTom Hanks\t41278\tDavid Giler\t1986\n3000000.0\tParamount Pictures\tUSA\tTom McLoughlin\tHorror\t1.9472057E7\tJason Lives: Friday the 13th Part VI\tR\t1986-08-01\t86\t5.9\tThom Mathews\t28310\tTom McLoughlin\t1986\n2.5E7\tThe Saul Zaentz Company\tUSA\tPeter Weir\tAdventure\t1.4302779E7\tThe Mosquito Coast\tPG\t1986-11-26\t117\t6.6\tHarrison Ford\t23076\tPaul Theroux\t1986\n0.0\tUniversal Pictures\tUSA\tDon Bluth\tAnimation\t4.7483002E7\tAn American Tail\tG\t1986-11-21\t80\t6.9\tDom DeLuise\t41004\tJudy Freudberg\t1986\n4000000.0\tInitial Pictures\tUK\tAlex Cox\tBiography\t2826523.0\tSid and Nancy\tR\t1986-11-07\t112\t7.1\tGary Oldman\t25032\tAlex Cox\t1986\n1.0E7\tDe Laurentiis Entertainment Group (DEG)\tUSA\tJohn Guillermin\tAction\t4711220.0\tKing Kong Lives\tPG-13\t1986-12-19\t105\t3.8\tBrian Kerwin\t4401\tRonald Shusett\t1986\n4500000.0\tEmpire Pictures\tUSA\tStuart Gordon\tHorror\t1261000.0\tFrom Beyond\tR\t1986-10-24\t86\t6.7\tJeffrey Combs\t16636\tH.P. Lovecraft\t1986\n1.8E7\tTriStar Pictures\tUSA\tFrancis Ford Coppola\tComedy\t4.1382841E7\tPeggy Sue Got Married\tPG-13\t1986-10-10\t103\t6.3\tKathleen Turner\t28529\tJerry Leichtling\t1986\n1.9E7\tFreddie Fields Productions\tUSA\tBrian Gibson\tHorror\t4.0996665E7\tPoltergeist II: The Other Side\tPG-13\t1986-05-23\t91\t5.7\tJoBeth Williams\t20669\tMark Victor\t1986\n1100000.0\tEmpire Pictures\tUSA\tJohn Carl Buechler\tComedy\t5450815.0\tTroll\tPG-13\t1986-01-17\t82\t4.3\tMichael Moriarty\t7569\tEd Naha\t1986\n0.0\tMetro-Goldwyn-Mayer (MGM)\tUSA\tPeter Hyams\tAction\t3.8500726E7\tRunning Scared\tR\t1986-06-27\t107\t6.5\tGregory Hines\t9344\tGary DeVore\t1986\n0.0\tHawn / Sylbert Movie Company\tUSA\tMichael Ritchie\tComedy\t2.6285544E7\tWildcats\tR\t1986-02-14\t106\t5.9\tGoldie Hawn\t10239\tEzra Sacks\t1986\n111000.0\tMaljack Productions\tUSA\tJohn McNaughton\tBiography\t609939.0\tHenry: Portrait of a Serial Killer\tUNRATED\t1990-09-07\t83\t7.0\tMichael Rooker\t25367\tRichard Fire\t1986\n1.8E7\tABC Motion Pictures\tUSA\tHarry Winer\tAdventure\t9697739.0\tSpaceCamp\tPG\t1986-06-06\t107\t5.6\tKate Capshaw\t11484\tClifford Green\t1986\n6400000.0\tOrion Pictures\tUSA\tWoody Allen\tComedy\t4.0084041E7\tHannah and Her Sisters\tPG-13\t1986-03-14\t107\t8.0\tMia Farrow\t56988\tWoody Allen\t1986\n1.4E7\tWalt Disney Pictures\tUSA\tRon Clements\tAnimation\t3.86E7\tThe Great Mouse Detective\tG\t1986-07-02\t74\t7.2\tVincent Price\t36539\tPeter Young\t1986\n8500000.0\tDe Laurentiis Entertainment Group (DEG)\tUSA\tJohn Irvin\tAction\t1.6209459E7\tRaw Deal\tR\t1986-06-06\t106\t5.5\tArnold Schwarzenegger\t24851\tLuciano Vincenzoni\t1986\n6000000.0\tSunbow Productions\tUSA\tNelson Shin\tAnimation\t5849647.0\tThe Transformers: The Movie\tPG\t1986-08-08\t84\t7.3\tOrson Welles\t33609\tRon Friedman\t1986\n0.0\tTaliaFilm II Productions\tUSA\tHal Needham\tDrama\t2015882.0\tRad\tPG\t1986-03-28\t91\t7.2\tBart Conner\t4039\tSam Bernard\t1986\n5000000.0\tTriStar Pictures\tUSA\tFred Dekker\tComedy\t591366.0\tNight of the Creeps\tR\t1986-08-22\t88\t6.8\tJason Lively\t16077\tFred Dekker\t1986\n1.2E7\tCannon Pictures\tUSA\tTobe Hooper\tHorror\t4884663.0\tInvaders from Mars\tPG\t1986-06-06\t100\t5.5\tKaren Black\t5878\tRichard Blake\t1986\n0.0\tColumbia Pictures Corporation\tUSA\tWalter Hill\tDrama\t5839031.0\tCrossroads\tR\t1986-03-14\t99\t7.1\tRalph Macchio\t11415\tJohn Fusco\t1986\n6000000.0\tDe Haven Productions\tUK\tDavid Anspaugh\tDrama\t2.8607524E7\tHoosiers\tPG\t1987-02-27\t114\t7.6\tGene Hackman\t36604\tAngelo Pizzo\t1986\n0.0\tSvenska Filminstitutet (SFI)\tSweden\tAndrei Tarkovsky\tDrama\t300653.0\tSacrifice\tPG\t1986-11\t149\t8.1\tErland Josephson\t16571\tAndrei Tarkovsky\t1986\n6500000.0\tCinema \u002785\tUSA\tJames Foley\tCrime\t2347000.0\tAt Close Range\tR\t1986-04-18\t111\t7.0\tSean Penn\t11607\tElliott Lewitt\t1986\n0.0\tBlueline Productions\tUSA\tPeter Markle\tDrama\t1.5448384E7\tYoungblood\tR\t1986-01-31\t110\t6.1\tRob Lowe\t10412\tPeter Markle\t1986\n0.0\tSeasonal Film Corporation\tUSA\tCorey Yuen\tAction\t4662137.0\tNo Retreat, No Surrender\tPG\t1986-05-02\t85\t5.6\tKurt McKinney\t12803\tSee-Yuen Ng\t1986\n0.0\tUniversal Pictures\tUSA\tAnthony Perkins\tHorror\t1.4481606E7\tPsicosis III\tR\t1986-07-02\t93\t5.3\tAnthony Perkins\t10022\tCharles Edward Pogue\t1986\n2.0E7\tParamount Pictures\tUSA\tMike Nichols\tComedy\t2.5314289E7\tHeartburn\tR\t1986-07-25\t108\t6.1\tMeryl Streep\t7570\tNora Ephron\t1986\n1.5E7\tWarner Bros.\tUSA\tMichael Chapman\tAdventure\t1953732.0\tThe Clan of the Cave Bear\tR\t1986-01-17\t98\t5.3\tDaryl Hannah\t5340\tJean M. Auel\t1986\n1.2E7\tGolan-Globus Productions\tUSA\tMenahem Golan\tAction\t1.77689E7\tThe Delta Force\tR\t1986-02-14\t125\t5.6\tChuck Norris\t15819\tJames Bruner\t1986\n0.0\tWarner Bros.\tUSA\tWes Craven\tDrama\t8988731.0\tDeadly Friend\tR\t1986-10-10\t91\t5.5\tMatthew Labyorteaux\t5419\tDiana Henstell\t1986\n0.0\tTriStar Pictures\tUSA\tEdward Zwick\tComedy\t3.870231E7\tAbout Last Night...\tR\t1986-07-02\t113\t6.2\tRob Lowe\t12307\tDavid Mamet\t1986\n0.0\tBalcor Film Investors\tUSA\tSteve Miner\tComedy\t2.782E7\tSoul Man\tPG-13\t1986-10-24\t104\t5.2\tC. Thomas Howell\t6440\tCarol Black\t1986\n0.0\tA\u0026M; Films\tUSA\tSavage Steve Holland\tComedy\t1.3431806E7\tOne Crazy Summer\tPG\t1986-08-08\t93\t6.4\tJohn Cusack\t11581\tSavage Steve Holland\t1986\n0.0\tDe Laurentiis Entertainment Group (DEG)\tUSA\tCharles Martin Smith\tComedy\t6797218.0\tTrick or Treat\tR\t1986-10-24\t98\t5.8\tMarc Price\t4585\tRhet Topham\t1986\n1.8E7\tParamount Pictures\tUSA\tRon Howard\tComedy\t3.661161E7\tGung Ho\tPG-13\t1986-03-14\t112\t6.2\tMichael Keaton\t9965\tEdwin Blum\t1986\n0.0\tAmerican Filmworks\tUSA\tSidney Lumet\tCrime\t2.5147055E7\tThe Morning After\tR\t1986-12-25\t103\t6.0\tJane Fonda\t4943\tJames Cresson\t1986\n0.0\tPolice Academy Productions\tUSA\tJerry Paris\tComedy\t4.3579163E7\tPolice Academy 3: Back in Training\tPG\t1986-03-21\t83\t5.2\tSteve Guttenberg\t35443\tNeal Israel\t1986\n175000.0\t40 Acres \u0026 A Mule Filmworks\tUSA\tSpike Lee\tComedy\t7137502.0\tShe\u0027s Gotta Have It\tR\t1986-08-08\t84\t6.6\tTracy Camilla Johns\t5257\tSpike Lee\t1986\n0.0\tTouchstone Pictures\tUSA\tJim Abrahams\tComedy\t7.1624879E7\tRuthless People\tR\t1986-06-27\t93\t6.9\tBette Midler\t22554\tDale Launer\t1986\n8700000.0\tDelphi V Productions\tUSA\tPaul Michael Glaser\tAction\t4865912.0\tBand of the Hand\tR\t1986-04-11\t109\t6.3\tStephen Lang\t2297\tLeo Garen\t1986\n0.0\tCannon Group\tUSA\tJohn Frankenheimer\tCrime\t5186646.0\t52 Pick-Up\tR\t1986-11-07\t110\t6.4\tRoy Scheider\t3866\tElmore Leonard\t1986\n0.0\tParamount Pictures\tUSA\tRanda Haines\tDrama\t3.185308E7\tChildren of a Lesser God\tR\t1986-10-31\t119\t7.2\tWilliam Hurt\t12538\tMark Medoff\t1986\n1.2E7\tColumbia Pictures Corporation\tUSA\tMark L. Lester\tAction\t1.5945534E7\tArmed and Dangerous\tPG-13\t1986-08-15\t88\t5.6\tJohn Candy\t9040\tBrian Grazer\t1986\n1100000.0\tBlack Snake\tUSA\tJim Jarmusch\tComedy\t1436000.0\tDown by Law\tR\t1986-10-30\t107\t7.8\tTom Waits\t39456\tJim Jarmusch\t1986\n1.0E7\tOrion Pictures\tUSA\tRobert Mandel\tAction\t2.0603715E7\tF/X\tR\t1986-02-07\t109\t6.7\tBryan Brown\t14502\tRobert T. Megginson\t1986\n0.0\tFuji Television Network\tJapan\tMasanori Hata\tAdventure\t1.3245219E7\tThe Adventures of Milo and Otis\tG\t1989-08-25\t90\t7.1\tKy�ko Koizumi\t9178\tMasanori Hata\t1986\n0.0\tReligioso Primitiva\tUSA\tJonathan Demme\tComedy\t8362969.0\tSomething Wild\tR\t1986-11-07\t114\t6.9\tJeff Daniels\t13186\tE. Max Frye\t1986\n1.8E7\tGladden Entertainment\tUSA\tMarshall Brickman\tSci-Fi\t3900000.0\tThe Manhattan Project\tPG-13\t1986-06-13\t117\t6.1\tJohn Lithgow\t4666\tMarshall Brickman\t1986\n5000000.0\tParamount Pictures\tUSA\tFred Walton\tHorror\t1.2947763E7\tApril Fool\u0027s Day\tR\t1986-03-28\t89\t6.2\tDeborah Foreman\t11458\tDanilo Bach\t1986\n2.5E7\tBrooksfilms\tUSA\tAlan Johnson\tAction\t1579260.0\tSolarbabies\tPG-13\t1986-11-26\t94\t4.8\tRichard Jordan\t3397\tWalon Green\t1986\n0.0\tKings Road Entertainment\tUSA\tJim McBride\tComedy\t1.7685307E7\tThe Big Easy\tR\t1987-08-28\t102\t6.6\tDennis Quaid\t10022\tDaniel Petrie Jr.\t1986\n0.0\tLawrence Gordon Productions\tUSA\tPenny Marshall\tComedy\t2.5587804E7\tJumpin\u0027 Jack Flash\tR\t1986-10-10\t105\t5.8\tWhoopi Goldberg\t15703\tDavid Franzoni\t1986\n4.0E7\tCarthago Films S.a.r.l.\tFrance\tRoman Polanski\tAdventure\t1641825.0\tPiratas\tPG-13\t1986-07-18\t121\t6.1\tWalter Matthau\t6596\tJohn Brownjohn\t1986\n0.0\tMeltdown Productions\tUK\tJimmy T. Murakami\tAnimation\t5274.0\tWhen the Wind Blows\tNot specified\t1988-03-11\t80\t7.8\tPeggy Ashcroft\t7900\tRaymond Briggs\t1986\n1.0E7\tTouchstone Pictures\tUSA\tJeff Kanew\tComedy\t2.1458229E7\tTough Guys\tPG\t1986-10-03\t104\t6.2\tBurt Lancaster\t5584\tJames Orr\t1986\n0.0\tCompa��a Iberoamericana de TV\tSpain\tPedro Almod�var\tDrama\t206952.0\tMatador\tNC-17\t1986-03-07\t110\t7.0\tAssumpta Serna\t8959\tPedro Almod�var\t1986\n0.0\tNew World Pictures\tUSA\tHarley Cokeliss\tAction\t6637565.0\tBlack Moon Rising\tR\t1986-01-10\t100\t5.4\tTommy Lee Jones\t4045\tJohn Carpenter\t1986\n1.2E7\tCinema Group Ventures\tUSA\tRoger Spottiswoode\tComedy\t7790931.0\tThe Best of Times\tPG-13\t1986-01-31\t104\t5.9\tRobin Williams\t5523\tRon Shelton\t1986\n2000000.0\tParagon Arts International\tUK\tKevin Tenney\tHorror\t7369373.0\tWitchboard\tR\t1987-03-13\t98\t5.7\tTodd Allen\t4744\tKevin Tenney\t1986\n1.4E7\tTouchstone Pictures\tUSA\tPaul Mazursky\tComedy\t6.2134225E7\tDown and Out in Beverly Hills\tR\t1986-01-31\t103\t6.1\tNick Nolte\t13569\tRen� Fauchois\t1986\n8500000.0\tCapital Equipment Leasing\tUK\tTrevor Nunn\tBiography\t277646.0\tLady Jane\tPG-13\t1986-02-07\t136\t7.2\tHelena Bonham Carter\t5364\tChris Bryant\t1986\n0.0\tColumbia Pictures Corporation\tUSA\tThomas Michael Donnelly\tCrime\t7634909.0\tQuicksilver\tPG\t1986-02-14\t105\t5.6\tKevin Bacon\t3720\tThomas Michael Donnelly\t1986\n0.0\tSunbow Productions\tUSA\tMike Joens\tAnimation\t5958456.0\tMy Little Pony: The Movie\tG\t1986-06-06\t86\t6.0\tDanny DeVito\t2125\tGeorge Arthur Bloom\t1986\n0.0\tVirgin Vision\tUK\tKen Russell\tHorror\t916172.0\tGothic\tR\t1987-04-10\t87\t5.7\tGabriel Byrne\t5843\tLord Byron\t1986\n1.8E7\tProducers Sales Organization (PSO)\tUSA\tHal Ashby\tAction\t1305114.0\t8 Million Ways to Die\tR\t1986-04-25\t115\t5.7\tJeff Bridges\t3607\tLawrence Block\t1986\n0.0\tTriStar Pictures\tUSA\tRichard Pearce\tCrime\t1.2303904E7\tNo Mercy\tR\t1986-12-19\t106\t5.7\tRichard Gere\t5564\tJames Carabatsos\t1986\n0.0\tOrion Pictures\tUSA\tGene Wilder\tComedy\t8033397.0\tHaunted Honeymoon\tPG\t1986-07-25\t82\t5.6\tGene Wilder\t5549\tGene Wilder\t1986\n0.0\tEmpire Pictures\tUSA\tTed Nicolaou\tComedy\t320256.0\tTerrorVision\tR\t1986-02-14\t83\t5.7\tDiane Franklin\t4620\tTed Nicolaou\t1986\n0.0\tGolan-Globus Productions\tUSA\tGary Nelson\tAction\t3751699.0\tAllan Quatermain and the Lost City of Gold\tPG\t1987-01-30\t99\t4.4\tRichard Chamberlain\t7491\tH. Rider Haggard\t1986\n0.0\tHandMade Films\tUK\tNeil Jordan\tCrime\t5794184.0\tMona Lisa\tR\t1986-06-13\t104\t7.4\tBob Hoskins\t10747\tNeil Jordan\t1986\n0.0\tDelphi Films\tUSA\tGarry Marshall\tComedy\t3.2324557E7\tNothing in Common\tPG\t1986-07-30\t118\t5.9\tTom Hanks\t5345\tRick Podell\t1986\n8000000.0\tCannon Group\tUSA\tJ. Lee Thompson\tAction\t1.1834302E7\tFirewalker\tPG\t1986-11-21\t104\t5.0\tChuck Norris\t4752\tRobert Gosnell\t1986\n0.0\tCannon Screen Entertainment\tUK\tNicolas Roeg\tAdventure\t483460.0\tCastaway\tR\t1987-09-11\t117\t6.0\tOliver Reed\t2649\tLucy Irvine\t1986\n3300000.0\tAmaretto Films\tUSA\tRichard Wenk\tComedy\t4941117.0\tVamp\tR\t1986-07-18\t93\t5.9\tChris Makepeace\t3909\tDonald P. Borchers\t1986\n0.0\tBritish Film Institute (BFI)\tUK\tDerek Jarman\tBiography\t3151.0\tCaravaggio\tNot specified\t1986-08-29\t93\t6.7\tNoam Almaz\t4072\tDerek Jarman\t1986\n0.0\tLes Films Plain Chant\tFrance\tLeos Carax\tCrime\t21483.0\tMauvais Sang\tUNRATED\t1986-11-26\t116\t7.3\tMichel Piccoli\t4922\tLeos Carax\t1986\n0.0\tParamount Pictures\tUSA\tDuncan Gibbins\tDrama\t4636169.0\tFire with Fire\tPG-13\t1986-05-09\t103\t6.6\tCraig Sheffer\t1264\tBill Phillips\t1986\n1.5E7\tWarner Bros.\tUSA\tHarold Ramis\tComedy\t1.2308521E7\tClub Paradise\tPG-13\t1986-07-11\t96\t4.9\tRobin Williams\t5049\tHarry Shearer\t1986\n4.0E7\tUniversal Pictures\tUSA\tIvan Reitman\tComedy\t4.9851591E7\tLegal Eagles\tPG\t1986-06-20\t116\t5.9\tRobert Redford\t8374\tIvan Reitman\t1986\n0.0\tThorn EMI Screen Entertainment\tUK\tChristopher Morahan\tComedy\t1476356.0\tClockwise\tPG\t1986-10-10\t96\t6.6\tJohn Cleese\t9689\tMichael Frayn\t1986\n0.0\tAtlantic Entertainment Group\tUSA\tRobert M. Young\tDrama\t1.3418091E7\tExtremities\tR\t1986-08-22\t89\t6.3\tFarrah Fawcett\t2705\tWilliam Mastrosimone\t1986\n1.3E7\tMetro-Goldwyn-Mayer (MGM)\tUSA\tBrian De Palma\tComedy\t8475466.0\tWise Guys\tR\t1986-04-18\t100\t5.6\tDanny DeVito\t4573\tGeorge Gallo\t1986\n0.0\tAtlantic Entertainment Group\tUSA\tPeter Medak\tDrama\t2444076.0\tThe Men\u0027s Club\tR\t1986-09-19\t101\t4.5\tDavid Dukes\t680\tLeonard Michaels\t1986\n0.0\tDD Productions\tSwitzerland\tClaude Berri\tDrama\t4940939.0\tJean de Florette\tPG\t1987-08-28\t120\t8.1\tYves Montand\t20914\tClaude Berri\t1986\n0.0\tBalcor Film Investors\tUSA\tTom DeSimone\tDrama\t2510433.0\tReform School Girls\tR\t1986-08-22\t94\t5.2\tLinda Carol\t1717\tJack Cummins\t1986\n0.0\tDD Productions\tSwitzerland\tClaude Berri\tDrama\t3940542.0\tManon of the Spring\tPG\t1987-12-04\t113\t8.0\tYves Montand\t17849\tClaude Berri\t1986\n1.7E7\tHandMade Films\tUK\tJim Goddard\tAdventure\t2315683.0\tShanghai Surprise\tPG-13\t1986-08-29\t97\t3.1\tSean Penn\t4339\tJohn Kohn\t1986\n1.6E7\tLorimar Productions\tUSA\tSidney Lumet\tDrama\t3800000.0\tPower\tR\t1986-01-31\t111\t5.7\tRichard Gere\t2287\tDavid Himmelstein\t1986\n0.0\tNot specified\tUSA\tJerry Kramer\tComedy\t604849.0\tModern Girls\tPG-13\t1986-11-07\t84\t5.9\tDaphne Zuniga\t1023\tLaurie Craig\t1986\n2.0E7\tDe Laurentiis Entertainment Group (DEG)\tUSA\tBruce Beresford\tComedy\t2.29055E7\tCrimes of the Heart\tPG-13\t1987-01-23\t105\t6.4\tDiane Keaton\t3079\tBeth Henley\t1986\n0.0\tCinema VII\tUSA\tJohn McTiernan\tHorror\t2278264.0\tNomads\tR\t1986-03-07\t91\t5.5\tLesley-Anne Down\t3006\tJohn McTiernan\t1986\n0.0\tEmpire Pictures\tUSA\tPeter Manoogian\tAction\t4601256.0\tEliminators\tPG\t1986-01-31\t96\t4.5\tAndrew Prine\t1422\tPaul De Meo\t1986\n0.0\tTMS Pictures\tCanada\tGeorge Mendeluk\tComedy\t2147228.0\tMeatballs III: Summer Job\tR\t1987-01-09\t96\t3.3\tSally Kellerman\t2003\tJanis Allen\t1986\n6000000.0\tGolan-Globus Productions\tUSA\tJ. Lee Thompson\tAction\t9947631.0\tMurphy\u0027s Law\tR\t1986-04-18\t100\t5.9\tCharles Bronson\t3561\tGail Morgan Hickman\t1986\n0.0\tEdward R. Pressman Film\tUSA\tDavid Byrne\tMusical\t2545142.0\tTrue Stories\tPG\t1986-10-10\t90\t7.0\tDavid Byrne\t3885\tStephen Tobolowsky\t1986\n0.0\tWarner Bros.\tUSA\tPrince\tComedy\t1.0090429E7\tUnder the Cherry Moon\tPG-13\t1986-07-02\t98\t4.9\tPrince\t2549\tBecky Johnston\t1986\n0.0\tDelphi V Productions\tIsrael\tMosh� Mizrahi\tDrama\t278623.0\tEvery Time We Say Goodbye\tPG-13\t1986-11-14\t95\t5.9\tTom Hanks\t1834\tMosh� Mizrahi\t1986\n0.0\tGoldcrest Films International\tUK\tJulien Temple\tDrama\t930211.0\tAbsolute Beginners\tPG-13\t1986-04-18\t108\t5.6\tPatsy Kensit\t2659\tColin MacInnes\t1986\n0.0\tLittle Bear\tUSA\tBertrand Tavernier\tDrama\t3272600.0\t\u0027Round Midnight\tR\t1986-10-03\t133\t7.4\tDexter Gordon\t4028\tDavid Rayfiel\t1986\n4000000.0\tCannon Group, The\tUSA\tSam Firstenberg\tAction\t4679650.0\tAvenging Force\tR\t1986-09-12\t104\t5.9\tMichael Dudikoff\t1808\tJames Booth\t1986\n"
+          },
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"result-alert alert-warning\" role\u003d\"alert\"\u003e\u003cbutton type\u003d\"button\" class\u003d\"close\" data-dismiss\u003d\"alert\" aria-label\u003d\"Close\"\u003e\u003cspan aria-hidden\u003d\"true\"\u003e\u0026times;\u003c/span\u003e\u003c/button\u003e\u003cstrong\u003eOutput is truncated\u003c/strong\u003e to 140 rows. Learn more about \u003cstrong\u003ezeppelin.spark.maxResult\u003c/strong\u003e\u003c/div\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593128566944_538873900",
+      "id": "paragraph_1593128566944_538873900",
+      "dateCreated": "2020-06-26 01:42:46.944",
+      "dateStarted": "2020-06-29 00:07:24.014",
+      "dateFinished": "2020-06-29 00:07:24.402",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Attribute profiling",
+      "text": "\n// set query dataset\nval queryDataset \u003d mapDS(\"movies.csv\")\n\n\nval candidateDatasets \u003d mapDS.-(\"movies.csv\").map(_._2).toSeq\n\n// from the query dataset we call attribute profiling\nval profile \u003d queryDataset.getAttributeProfiling\nz.show(profile)\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-28 17:22:26.416",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Dataset_name": "string",
+                      "Attribute_name": "string",
+                      "frequency_avg": "string",
+                      "frequency_min": "string",
+                      "frequency_max": "string",
+                      "frequency_sd": "string",
+                      "val_pct_std": "string",
+                      "frequency_2qo": "string",
+                      "frequency_4qo": "string",
+                      "frequency_6qo": "string",
+                      "frequency_1qo": "string",
+                      "frequency_3qo": "string",
+                      "frequency_5qo": "string",
+                      "frequency_7qo": "string",
+                      "entropy": "string",
+                      "FrequentWords": "string",
+                      "FrequentWordsInSoundex": "string",
+                      "dataType": "string",
+                      "PctAlphabetic": "string",
+                      "PctDateTime": "string",
+                      "PctAlphanumeric": "string",
+                      "PctNumeric": "string",
+                      "PctNonAlphanumeric": "string",
+                      "specificType": "string",
+                      "PctPhones": "string",
+                      "PctEmail": "string",
+                      "PctIP": "string",
+                      "PctURL": "string",
+                      "PctUsername": "string",
+                      "PctGeneral": "string",
+                      "PctOthers": "string",
+                      "PctSpaces": "string",
+                      "PctPhrases": "string",
+                      "cardinality": "string",
+                      "incompleteness": "string",
+                      "len_max_word": "string",
+                      "len_min_word": "string",
+                      "len_avg_word": "string",
+                      "firstWord": "string",
+                      "lastWord": "string",
+                      "AvgNumberWords": "string",
+                      "MinNumberWords": "string",
+                      "MaxNumberWords": "string",
+                      "SdNumberWords": "string",
+                      "numberWords": "string",
+                      "uniqueness": "string",
+                      "val_pct_min": "string",
+                      "val_pct_max": "string",
+                      "frequency_IQR": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 374.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default",
+                  "stacked": true
+                },
+                "stackedAreaChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "ds_name0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "att_name1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_avg2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_min3",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_max4",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_sd5",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "val_pct_std6",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_2qo7",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_4qo8",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_6qo9",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_1qo10",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_3qo11",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_5qo12",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_7qo13",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "entropy14",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "freqWordContainment15",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {
+                          "priority": 0.0,
+                          "direction": "asc"
+                        },
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "freqWordCleanContainment16",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "freqWordSoundexContainment17",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "dataType18",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctAlphabetic19",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctDateTime20",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctAlphanumeric21",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctNumeric22",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctNonAlphanumeric23",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "specificType24",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctPhones25",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctEmail26",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctIP27",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctURL28",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctUsername29",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctGeneral30",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctOthers31",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctSpaces32",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "PctPhrases33",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "cardinality34",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "incompleteness35",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "len_max_word36",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "len_min_word37",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "len_avg_word38",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "firstWord39",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "lastWord40",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "wordsCntAvg41",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "wordsCntMin42",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "wordsCntMax43",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "wordsCntSd44",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "numberWords45",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "uniqueness46",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "isEmpty47",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "val_pct_min48",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "val_pct_max49",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "frequency_IQR50",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "binary51",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "bestContainment52",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1.0,
+                      "paginationPageSize": 250.0
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "Dataset_name": "string",
+                      "Attribute_name": "string",
+                      "frequency_avg": "string",
+                      "frequency_min": "string",
+                      "frequency_max": "string",
+                      "frequency_sd": "string",
+                      "val_pct_std": "string",
+                      "frequency_2qo": "string",
+                      "frequency_4qo": "string",
+                      "frequency_6qo": "string",
+                      "frequency_1qo": "string",
+                      "frequency_3qo": "string",
+                      "frequency_5qo": "string",
+                      "frequency_7qo": "string",
+                      "entropy": "string",
+                      "FrequentWords": "string",
+                      "FrequentWordsInSoundex": "string",
+                      "dataType": "string",
+                      "PctAlphabetic": "string",
+                      "PctDateTime": "string",
+                      "PctAlphanumeric": "string",
+                      "PctNumeric": "string",
+                      "PctNonAlphanumeric": "string",
+                      "specificType": "string",
+                      "PctPhones": "string",
+                      "PctEmail": "string",
+                      "PctIP": "string",
+                      "PctURL": "string",
+                      "PctUsername": "string",
+                      "PctGeneral": "string",
+                      "PctOthers": "string",
+                      "PctSpaces": "string",
+                      "PctPhrases": "string",
+                      "cardinality": "string",
+                      "incompleteness": "string",
+                      "len_max_word": "string",
+                      "len_min_word": "string",
+                      "len_avg_word": "string",
+                      "firstWord": "string",
+                      "lastWord": "string",
+                      "AvgNumberWords": "string",
+                      "MinNumberWords": "string",
+                      "MaxNumberWords": "string",
+                      "SdNumberWords": "string",
+                      "numberWords": "string",
+                      "uniqueness": "string",
+                      "val_pct_min": "string",
+                      "val_pct_max": "string",
+                      "frequency_IQR": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "ds_name",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "att_name",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "Dataset_name\tAttribute_name\tfrequency_avg\tfrequency_min\tfrequency_max\tfrequency_sd\tval_pct_std\tfrequency_2qo\tfrequency_4qo\tfrequency_6qo\tfrequency_1qo\tfrequency_3qo\tfrequency_5qo\tfrequency_7qo\tentropy\tFrequentWords\tFrequentWordsInSoundex\tdataType\tPctAlphabetic\tPctDateTime\tPctAlphanumeric\tPctNumeric\tPctNonAlphanumeric\tspecificType\tPctPhones\tPctEmail\tPctIP\tPctURL\tPctUsername\tPctGeneral\tPctOthers\tPctSpaces\tPctPhrases\tcardinality\tincompleteness\tlen_max_word\tlen_min_word\tlen_avg_word\tfirstWord\tlastWord\tAvgNumberWords\tMinNumberWords\tMaxNumberWords\tSdNumberWords\tnumberWords\tuniqueness\tval_pct_min\tval_pct_max\tfrequency_IQR\nmovies.csv\tcompany\t3.129876089949518\t1\t302\t14.247150469367828\t0.0020890249955084783\t1.466275659824047E-4\t1.466275659824047E-4\t2.932551319648094E-4\t1.466275659824047E-4\t1.466275659824047E-4\t1.466275659824047E-4\t4.398826979472141E-4\t9.007061149768282\tWrappedArray(universal pictures, warner bros., paramount pictures, twentieth century fox film corporation, new line cinema, columbia pictures corporation, touchstone pictures, columbia pictures, walt disney pictures, metro-goldwyn-mayer (mgm))\tWrappedArray(W656, U516, C451, P655, T533, N452, T235, W433, D656, M362)\talphanumeric\t0.07021569527306104\t0.0\t0.9293253786140432\t4.589261128958238E-4\t0.0\tphrases\t0.0\t0.0\t0.0\t0.0\t4.589261128958238E-4\t0.0013767783386874712\t0.17852225791647544\t0.0\t0.7489674162459844\t2179\t0.0\t11\t31\t18.856304985337243\t\"DIA\" Productions GmbH \u0026 Co. KG\tmicro_scope\t2.45366568914956\t1\t11\t0.9556406364665374\t16734\t0.31950146627565984\t1.466275659824047E-4\t0.04428152492668622\t1.466275659824047E-4\nmovies.csv\twriter\t1.6241962371993333\t1\t32\t1.4899026392108143\t2.1846079753824266E-4\t1.466275659824047E-4\t1.466275659824047E-4\t2.932551319648094E-4\t1.466275659824047E-4\t1.466275659824047E-4\t1.466275659824047E-4\t4.398826979472141E-4\t11.684952517933622\tWrappedArray(woody allen, luc besson, stephen king, john hughes, david mamet, william shakespeare, pedro almod�var, tyler perry, wes craven, robert rodriguez)\tWrappedArray(R163, S315, A536, D132, M242, R263, J522, P362, C623, J526)\talphanumeric\t0.0021433674684448677\t0.0\t0.9978566325315551\t0.0\t0.0\tphrases\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t0.1059776137175518\t0.0\t0.8918790188140033\t4199\t0.0\t10\t19\t13.139296187683284\t\u0027Weird Al\u0027 Yankovic\t�va G�rdos\t2.1055718475073313\t1\t4\t0.32491556985759124\t14360\t0.6156891495601173\t1.466275659824047E-4\t0.00469208211143695\t1.466275659824047E-4\nmovies.csv\tdirector\t2.4719101123595504\t1\t33\t2.6360462387826793\t3.8651704380977716E-4\t1.466275659824047E-4\t1.466275659824047E-4\t4.398826979472141E-4\t1.466275659824047E-4\t1.466275659824047E-4\t2.932551319648094E-4\t7.331378299120235E-4\t10.885727237414473\tWrappedArray(woody allen, clint eastwood, steven spielberg, steven soderbergh, ron howard, ridley scott, joel schumacher, barry levinson, spike lee, oliver stone)\tWrappedArray(S315, R163, R263, F652, P362, A536, D132, C623, J535, M242)\talphanumeric\t0.001812250815512867\t0.0\t0.9981877491844872\t0.0\t0.0\tphrases\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t0.09423704240666908\t0.0\t0.9039507067778181\t2759\t0.0\t10\t15\t13.119354838709677\tA.R. Murugadoss\t�va G�rdos\t2.079765395894428\t1\t4\t0.2897586275902174\t14184\t0.40454545454545454\t1.466275659824047E-4\t0.004838709677419355\t2.932551319648094E-4\nmovies.csv\tstar\t2.7236421725239617\t1\t42\t4.013692637411896\t5.885179820252044E-4\t1.466275659824047E-4\t1.466275659824047E-4\t2.932551319648094E-4\t1.466275659824047E-4\t1.466275659824047E-4\t2.932551319648094E-4\t7.331378299120235E-4\t10.443717434484851\tWrappedArray(nicolas cage, robert de niro, denzel washington, tom hanks, bruce willis, johnny depp, tom cruise, ben stiller, adam sandler, john cusack)\tWrappedArray(R163, C623, M242, J516, N242, S315, A535, R263, K152, J252)\talphanumeric\t0.004792332268370607\t0.0\t0.9952076677316294\t0.0\t0.0\tphrases\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t0.08825878594249201\t0.0\t0.9069488817891374\t2504\t0.0\t15\t19\t13.0841642228739\t\u0027Weird Al\u0027 Yankovic\t�milie Dequenne\t2.0629032258064517\t1\t5\t0.26474535879644207\t14069\t0.3671554252199413\t1.466275659824047E-4\t0.0061583577712609975\t1.466275659824047E-4\nmovies.csv\tname\t1.0132224038032982\t1\t3\t0.11679827558844683\t1.7125846860476075E-5\t1.466275659824047E-4\t1.466275659824047E-4\t1.466275659824047E-4\t1.466275659824047E-4\t1.466275659824047E-4\t1.466275659824047E-4\t1.466275659824047E-4\t12.709234942532591\tWrappedArray(pulse, hamlet, priest, hercules, man of the house, chocolat, the unborn, everybody\u0027s fine, the avengers, fantastic four)\tWrappedArray(T423, T123, T252, S363, A562, T523, T253, T525, T165, T161)\talphanumeric\t0.1874907146040707\t0.0\t0.810726489377507\t0.0017827960184222255\t0.0\tphrases\t0.0\t0.0\t0.0\t0.0\t0.0\t8.913980092111127E-4\t0.17352547912642996\t0.0\t0.636309612241866\t6731\t0.0\t8\t3\t14.973900293255133\t\u002771\t�on Flux\t2.7092375366568917\t1\t14\t1.512432254617709\t18477\t0.986950146627566\t1.466275659824047E-4\t4.398826979472141E-4\t0.0\nmovies.csv\tcountry\t119.64912280701755\t1\t4872\t642.8363271874591\t0.09425752598056586\t2.932551319648094E-4\t8.797653958944282E-4\t0.002932551319648094\t1.466275659824047E-4\t5.865102639296188E-4\t0.0017595307917888563\t0.008211143695014663\t1.9046148806889793\tWrappedArray(usa, uk, france, canada, germany, australia, japan, spain, italy, ireland)\tWrappedArray(U200, F652, C530, G655, A236, J150, S150, I340, I645, I530)\talphabetic\t0.8245614035087719\t0.0\t0.17543859649122806\t0.0\t0.0\totherST\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t0.17543859649122806\t57\t0.0\t12\t9\t3.576099706744868\tArgentina\tWest Germany\t1.0153958944281525\t1\t4\t0.1277962495176164\t6925\t0.008357771260997068\t1.466275659824047E-4\t0.7143695014662756\t0.0026392961876832845\nmovies.csv\treleased\t2.8381190178942988\t1\t10\t1.7546120544126482\t2.5727449478191313E-4\t1.466275659824047E-4\t4.398826979472141E-4\t5.865102639296188E-4\t1.466275659824047E-4\t2.932551319648094E-4\t4.398826979472141E-4\t7.331378299120235E-4\t10.958728275278453\tWrappedArray(1991-10-04, 1988-11-18, 1988-10-21, 2008-09-26, 1990-03-09, 1993-02-12, 1986-08-22, 2012-04-20, 2003-11-14, 1986-11-07)\tWrappedArray(1991-10-04, 1988-11-18, 1988-10-21, 2008-09-26, 1990-03-09, 1993-02-12, 1986-08-22, 2012-04-20, 1986-11-07, 2003-11-14)\talphanumeric\t0.0\t0.0\t0.9970869746150645\t0.002913025384935497\t0.0\tphone\t0.9970869746150645\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t2403\t0.0\t10\t10\t9.968768328445748\t1986-01-10\t2017-11-23\t1.0\t1\t1\t0.0\t6820\t0.3523460410557185\t1.466275659824047E-4\t0.001466275659824047\t4.398826979472141E-4\nmovies.csv\trating\t524.6153846153846\t1\t3392\t995.1264734820655\t0.14591297265132927\t1.466275659824047E-4\t0.009237536656891495\t0.025513196480938416\t1.466275659824047E-4\t1.466275659824047E-4\t0.02155425219941349\t0.2925219941348974\t1.8376229866630587\tWrappedArray(r, pg-13, pg, not rated, g, unrated, not specified, nc-17, tv-pg, tv-14)\tWrappedArray(R000, P200, N363, G000, U563, N321, N200, B000, T112, T150)\talphanumeric\t0.38461538461538464\t0.0\t0.6153846153846154\t0.0\t0.0\tother\t0.0\t0.0\t0.0\t0.0\t0.0\t0.07692307692307693\t0.38461538461538464\t0.0\t0.15384615384615385\t13\t0.0\t7\t1\t2.7019061583577715\tB\tUNRATED\t1.0347507331378298\t1\t2\t0.1831478082975965\t7057\t0.001906158357771261\t1.466275659824047E-4\t0.49736070381231673\t0.025366568914956013\nmovies.csv\tgenre\t401.1764705882353\t2\t2080\t601.907090279488\t0.08825617159523284\t0.0020527859237536657\t0.005571847507331379\t0.05747800586510264\t5.865102639296188E-4\t0.0026392961876832845\t0.0406158357771261\t0.19516129032258064\t2.7452007417861766\tWrappedArray(comedy, drama, action, crime, adventure, biography, animation, horror, mystery, fantasy)\tWrappedArray(C530, D650, A235, C650, A315, B261, H660, A553, M236, F532)\talphabetic\t0.9411764705882353\t0.0\t0.058823529411764705\t0.0\t0.0\totherST\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t0.058823529411764705\t0.0\t0.0\t17\t0.0\t7\t6\t6.181671554252199\tAction\tWestern\t1.0\t1\t1\t0.0\t6820\t0.00249266862170088\t2.932551319648094E-4\t0.30498533724340177\t0.055425219941348976\n"
+          },
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mqueryDataset\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m \u003d [budget: double, company: string ... 13 more fields]\n\u001b[1m\u001b[34mcandidateDatasets\u001b[0m: \u001b[1m\u001b[32mSeq[org.apache.spark.sql.DataFrame]\u001b[0m \u003d List([AcquisitionID: string, AcquisitionMonth: string ... 8 more fields], [name: string, official_name_en: string ... 23 more fields], [show_id: string, type: string ... 10 more fields], [English_short_name_lower_case: string, Alpha-2_code: string ... 3 more fields], [song_name: string, song_popularity: int ... 13 more fields], [title: string, rating: string ... 5 more fields], [companynameid: string, companyname: string ... 20 more fields], [country: string, year: int ... 4 more fields], [movie_title: string, director_name: string ... 6 more fields], [Country: string, Region: stri..."
+          }
+        ]
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593123177286_1316737706",
+      "id": "paragraph_1593123177286_1316737706",
+      "dateCreated": "2020-06-26 00:12:57.286",
+      "dateStarted": "2020-06-28 17:22:26.474",
+      "dateFinished": "2020-06-28 17:22:34.069",
+      "status": "FINISHED"
+    },
+    {
+      "text": "z.show(queryDataset.select(\"country\").distinct)",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-27 20:12:21.220",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "country": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "country\nRussia\nSweden\nGermany\nFrance\nGreece\nFederal Republic of Yugoslavia\nTaiwan\nArgentina\nBelgium\nFinland\nPeru\nChina\nIndia\nBahamas\nMalta\nChile\nSoviet Union\nItaly\nNorway\nSpain\nCuba\nDenmark\nIran\nIreland\nThailand\nPanama\nHong Kong\nUkraine\nIsrael\nIceland\nWest Germany\nUSA\nSouth Korea\nPalestine\nMexico\nAruba\nIndonesia\nRepublic of Macedonia\nUK\nSaudi Arabia\nSwitzerland\nJamaica\nCanada\nCzech Republic\nBrazil\nKenya\nJapan\nNew Zealand\nPoland\nPortugal\nAustralia\nRomania\nAustria\nSouth Africa\nColombia\nHungary\nNetherlands\n"
+          }
+        ]
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593124316896_-262564121",
+      "id": "paragraph_1593124316896_-262564121",
+      "dateCreated": "2020-06-26 00:31:56.896",
+      "dateStarted": "2020-06-27 20:12:21.226",
+      "dateFinished": "2020-06-27 20:12:21.807",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Query-by-attribute",
+      "text": "\n\nFQJ.option(\"saveComparison\",\"true\")\nval queryAttr \u003d \"country\"\n\nprintln(s\"Candidates to consider for data discovery: ${candidateDatasets.size}\")\n\n// method for query-by-attribute\nval a \u003d FQJ.findQualityJoins(queryDataset,candidateDatasets,queryAttr )\n\n\nz.show(a)",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-28 17:22:37.695",
+      "config": {
+        "colWidth": 6.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "ds_name0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "att_name1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "ds_name_22",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "att_name_23",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "prediction4",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {
+                          "priority": 0.0,
+                          "direction": "desc"
+                        },
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1.0,
+                      "paginationPageSize": 250.0
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ds_name": "string",
+                      "att_name": "string",
+                      "ds_name_2": "string",
+                      "att_name_2": "string",
+                      "prediction": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Candidates to consider for data discovery: 13\n\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "ds_name\tatt_name\tds_name_2\tatt_name_2\tprediction\nmovies.csv\tcountry\twikipedia-iso-country-codes.csv\tEnglish_short_name_lower_case\t4\nmovies.csv\tcountry\tfifa_ranking.csv\tcountry_full\t4\nmovies.csv\tcountry\tcountries_and_continents.csv\tofficial_name_en\t4\nmovies.csv\tcountry\tcountries_and_continents.csv\tname\t4\nmovies.csv\tcountry\tcountries_of_the_world.csv\tCountry\t4\nmovies.csv\tcountry\tmovie_metadata.csv\tcountry\t4\nmovies.csv\tcountry\tCars93.csv\tModel\t2\nmovies.csv\tcountry\tus_companies.csv\tcountry\t2\nmovies.csv\tcountry\tnetflix_titles.csv\tcountry\t2\nmovies.csv\tcountry\tfifa_ranking.csv\tcountry_abrv\t1\nmovies.csv\tcountry\tcountries_and_continents.csv\tDS\t1\nmovies.csv\tcountry\tNetflix_Shows.csv\ttitle\t1\nmovies.csv\tcountry\tacquisitions.csv\tCountry\t1\nmovies.csv\tcountry\tCars93.csv\tMake\t1\nmovies.csv\tcountry\tmovie_metadata.csv\tlanguage\t1\nmovies.csv\tcountry\twho_suicide_statistics.csv\tcountry\t1\nmovies.csv\tcountry\tstudent-mat.csv\tpaid\t0\nmovies.csv\tcountry\tus_companies.csv\turl\t0\nmovies.csv\tcountry\tCars93.csv\tOrigin\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tITU\t0\nmovies.csv\tcountry\tstudent-mat.csv\tMjob\t0\nmovies.csv\tcountry\tacquisitions.csv\tAcquisitionID\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tIOC\t0\nmovies.csv\tcountry\tfifa_ranking.csv\tconfederation\t0\nmovies.csv\tcountry\tnetflix_titles.csv\trelease_year\t0\nmovies.csv\tcountry\tmovie_metadata.csv\tactor_1_name\t0\nmovies.csv\tcountry\tus_companies.csv\tbusinessmodel\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tContinent\t0\nmovies.csv\tcountry\tmovie_metadata.csv\tmovie_title\t0\nmovies.csv\tcountry\tus_companies.csv\tfinancialinfo\t0\nmovies.csv\tcountry\tnetflix_titles.csv\tdescription\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tISO4217-currency_alphabetic_code\t0\nmovies.csv\tcountry\twho_suicide_statistics.csv\tsex\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tLanguages\t0\nmovies.csv\tcountry\tnetflix_titles.csv\tdirector\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tISO3166-1-Alpha-3\t0\nmovies.csv\tcountry\twikipedia-iso-country-codes.csv\tAlpha-3_code\t0\nmovies.csv\tcountry\twikipedia-iso-country-codes.csv\tAlpha-2_code\t0\nmovies.csv\tcountry\twikipedia-iso-country-codes.csv\tISO_3166-2\t0\nmovies.csv\tcountry\tnetflix_titles.csv\tshow_id\t0\nmovies.csv\tcountry\tus_companies.csv\tyearfounded\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tis_independent\t0\nmovies.csv\tcountry\tstudent-mat.csv\tfamsize\t0\nmovies.csv\tcountry\tCars93.csv\tType\t0\nmovies.csv\tcountry\tus_companies.csv\tfulltimeemployees\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tISO3166-1-Alpha-2\t0\nmovies.csv\tcountry\tnetflix_titles.csv\tlisted_in\t0\nmovies.csv\tcountry\tus_companies.csv\tcompanytype\t0\nmovies.csv\tcountry\tmovie_metadata.csv\tcolor\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tCapital\t0\nmovies.csv\tcountry\tus_companies.csv\tdescription\t0\nmovies.csv\tcountry\tus_companies.csv\tcompanyname\t0\nmovies.csv\tcountry\tus_companies.csv\tdatatypes\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tEDGAR\t0\nmovies.csv\tcountry\tstudent-mat.csv\thigher\t0\nmovies.csv\tcountry\tnetflix_titles.csv\tduration\t0\nmovies.csv\tcountry\tstudent-mat.csv\tnursery\t0\nmovies.csv\tcountry\tus_companies.csv\tdescriptionshort\t0\nmovies.csv\tcountry\twho_suicide_statistics.csv\tage\t0\nmovies.csv\tcountry\tstudent-mat.csv\tschoolsup\t0\nmovies.csv\tcountry\tnetflix_titles.csv\trating\t0\nmovies.csv\tcountry\tstudent-mat.csv\tactivities\t0\nmovies.csv\tcountry\tCars93.csv\tAirBags\t0\nmovies.csv\tcountry\tstudent-mat.csv\taddress\t0\nmovies.csv\tcountry\tacquisitions.csv\tAcquisitionMonth\t0\nmovies.csv\tcountry\tacquisitions.csv\tBusiness\t0\nmovies.csv\tcountry\tus_companies.csv\tcompanycategory\t0\nmovies.csv\tcountry\tnetflix_titles.csv\tdate_added\t0\nmovies.csv\tcountry\tus_companies.csv\tcity\t0\nmovies.csv\tcountry\tus_companies.csv\tcompanynameid\t0\nmovies.csv\tcountry\tacquisitions.csv\tDerivedProducts\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tWMO\t0\nmovies.csv\tcountry\tus_companies.csv\tsocialimpact\t0\nmovies.csv\tcountry\tacquisitions.csv\tParentCompany\t0\nmovies.csv\tcountry\tNetflix_Shows.csv\tratingLevel\t0\nmovies.csv\tcountry\tus_companies.csv\texampleuses\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tFIPS\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tFIFA\t0\nmovies.csv\tcountry\tus_companies.csv\tlastupdated\t0\nmovies.csv\tcountry\tus_companies.csv\tsourcecount\t0\nmovies.csv\tcountry\tus_companies.csv\tdataimpacts\t0\nmovies.csv\tcountry\tstudent-mat.csv\tPstatus\t0\nmovies.csv\tcountry\tus_companies.csv\tstate\t0\nmovies.csv\tcountry\tnetflix_titles.csv\ttype\t0\nmovies.csv\tcountry\tstudent-mat.csv\tfamsup\t0\nmovies.csv\tcountry\tstudent-mat.csv\treason\t0\nmovies.csv\tcountry\tCars93.csv\tLuggageroom\t0\nmovies.csv\tcountry\tstudent-mat.csv\tschool\t0\nmovies.csv\tcountry\tnetflix_titles.csv\tcast\t0\nmovies.csv\tcountry\tstudent-mat.csv\tFjob\t0\nmovies.csv\tcountry\tstudent-mat.csv\tsex\t0\nmovies.csv\tcountry\tCars93.csv\tDriveTrain\t0\nmovies.csv\tcountry\tCars93.csv\tCylinders\t0\nmovies.csv\tcountry\tCars93.csv\tMantransavail\t0\nmovies.csv\tcountry\tacquisitions.csv\tCompany\t0\nmovies.csv\tcountry\tNetflix_Shows.csv\trating\t0\nmovies.csv\tcountry\tus_companies.csv\tzipcode\t0\nmovies.csv\tcountry\tstudent-mat.csv\tinternet\t0\nmovies.csv\tcountry\tCars93.csv\tRearseatroom\t0\nmovies.csv\tcountry\tstudent-mat.csv\tromantic\t0\nmovies.csv\tcountry\tstudent-mat.csv\tguardian\t0\nmovies.csv\tcountry\tCars93.csv\tManufacturer\t0\nmovies.csv\tcountry\tnetflix_titles.csv\ttitle\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tofficial_name_fr\t0\nmovies.csv\tcountry\tcountries_of_the_world.csv\tRegion\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tDial\t0\nmovies.csv\tcountry\tus_companies.csv\trevenuesource\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tMARC\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tGAUL\t0\nmovies.csv\tcountry\tsong_data.csv\tsong_name\t0\nmovies.csv\tcountry\tmovie_metadata.csv\tdirector_name\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tTLD\t0\n"
+          },
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mqueryAttr\u001b[0m: \u001b[1m\u001b[32mString\u001b[0m \u003d country\n\u001b[1m\u001b[34ma\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m \u003d [ds_name: string, att_name: string ... 3 more fields]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593125149360_-545675198",
+      "id": "paragraph_1593125149360_-545675198",
+      "dateCreated": "2020-06-26 00:45:49.360",
+      "dateStarted": "2020-06-28 17:22:37.701",
+      "dateFinished": "2020-06-28 17:25:06.372",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Query-by-dataset",
+      "text": "\n\nz.show(\n    \n    // two parameters indicate query-by-dataset\n    FQJ.findQualityJoins(queryDataset,candidateDatasets )\n    )",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-28 17:22:44.106",
+      "config": {
+        "colWidth": 6.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ds_name": "string",
+                      "att_name": "string",
+                      "ds_name_2": "string",
+                      "att_name_2": "string",
+                      "prediction": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "ds_name0",
+                        "visible": true,
+                        "width": 150.0,
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "att_name1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "ds_name_22",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "att_name_23",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "prediction4",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {
+                          "priority": 0.0,
+                          "direction": "desc"
+                        },
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1.0,
+                      "paginationPageSize": 250.0
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "ds_name": "string",
+                      "att_name": "string",
+                      "ds_name_2": "string",
+                      "att_name_2": "string",
+                      "prediction": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "ds_name\tatt_name\tds_name_2\tatt_name_2\tprediction\nmovies.csv\tcountry\tcountries_of_the_world.csv\tCountry\t4\nmovies.csv\tcountry\tfifa_ranking.csv\tcountry_full\t4\nmovies.csv\tcountry\twikipedia-iso-country-codes.csv\tEnglish_short_name_lower_case\t4\nmovies.csv\tcountry\tmovie_metadata.csv\tcountry\t4\nmovies.csv\tcountry\tcountries_and_continents.csv\tofficial_name_en\t4\nmovies.csv\tcountry\tcountries_and_continents.csv\tname\t4\nmovies.csv\trating\tNetflix_Shows.csv\trating\t3\nmovies.csv\tdirector\tmovie_metadata.csv\tdirector_name\t3\nmovies.csv\trating\tnetflix_titles.csv\trating\t3\nmovies.csv\tcountry\tCars93.csv\tModel\t2\nmovies.csv\tcountry\tus_companies.csv\tcountry\t2\nmovies.csv\tcountry\tnetflix_titles.csv\tcountry\t2\nmovies.csv\tcountry\tNetflix_Shows.csv\ttitle\t1\nmovies.csv\tname\tacquisitions.csv\tAcquisitionID\t1\nmovies.csv\tcompany\tus_companies.csv\tstate\t1\nmovies.csv\tcountry\tCars93.csv\tMake\t1\nmovies.csv\tcompany\tus_companies.csv\tcity\t1\nmovies.csv\tstar\tmovie_metadata.csv\tdirector_name\t1\nmovies.csv\tname\tmovie_metadata.csv\tdirector_name\t1\nmovies.csv\tcompany\tcountries_and_continents.csv\tCapital\t1\nmovies.csv\tstar\tnetflix_titles.csv\tshow_id\t1\nmovies.csv\twriter\tnetflix_titles.csv\tdirector\t1\nmovies.csv\tdirector\tsong_data.csv\tsong_name\t1\nmovies.csv\tcompany\twikipedia-iso-country-codes.csv\tAlpha-2_code\t1\nmovies.csv\treleased\tacquisitions.csv\tAcquisitionID\t1\nmovies.csv\treleased\tnetflix_titles.csv\ttitle\t1\nmovies.csv\tcompany\twho_suicide_statistics.csv\tcountry\t1\nmovies.csv\tname\tnetflix_titles.csv\tshow_id\t1\nmovies.csv\tname\tsong_data.csv\tsong_name\t1\nmovies.csv\twriter\tcountries_of_the_world.csv\tCountry\t1\nmovies.csv\tdirector\tacquisitions.csv\tBusiness\t1\nmovies.csv\tcompany\tnetflix_titles.csv\tdirector\t1\nmovies.csv\tname\tnetflix_titles.csv\tdescription\t1\nmovies.csv\tname\tacquisitions.csv\tCompany\t1\nmovies.csv\tstar\tnetflix_titles.csv\tcast\t1\nmovies.csv\tcompany\tcountries_and_continents.csv\tISO4217-currency_alphabetic_code\t1\nmovies.csv\treleased\tmovie_metadata.csv\tmovie_title\t1\nmovies.csv\tname\tnetflix_titles.csv\ttitle\t1\nmovies.csv\tcompany\tnetflix_titles.csv\ttitle\t1\nmovies.csv\treleased\tcountries_of_the_world.csv\tCountry\t1\nmovies.csv\tstar\tnetflix_titles.csv\ttitle\t1\nmovies.csv\tcompany\tmovie_metadata.csv\tmovie_title\t1\nmovies.csv\trating\tstudent-mat.csv\taddress\t1\nmovies.csv\treleased\tmovie_metadata.csv\tactor_1_name\t1\nmovies.csv\tcountry\tcountries_and_continents.csv\tDS\t1\nmovies.csv\tdirector\tacquisitions.csv\tCompany\t1\nmovies.csv\twriter\tacquisitions.csv\tCompany\t1\nmovies.csv\tcountry\tacquisitions.csv\tCountry\t1\nmovies.csv\treleased\tsong_data.csv\tsong_name\t1\nmovies.csv\treleased\tnetflix_titles.csv\tshow_id\t1\nmovies.csv\tcountry\twho_suicide_statistics.csv\tcountry\t1\nmovies.csv\tstar\twikipedia-iso-country-codes.csv\tEnglish_short_name_lower_case\t1\nmovies.csv\treleased\tacquisitions.csv\tCompany\t1\nmovies.csv\tstar\tnetflix_titles.csv\tdirector\t1\nmovies.csv\tstar\tsong_data.csv\tsong_name\t1\nmovies.csv\twriter\tacquisitions.csv\tBusiness\t1\nmovies.csv\tcompany\tnetflix_titles.csv\tcast\t1\nmovies.csv\tname\tnetflix_titles.csv\tdirector\t1\nmovies.csv\tname\tNetflix_Shows.csv\ttitle\t1\nmovies.csv\tname\tnetflix_titles.csv\tcast\t1\nmovies.csv\twriter\tnetflix_titles.csv\ttitle\t1\nmovies.csv\tstar\tNetflix_Shows.csv\ttitle\t1\nmovies.csv\tdirector\tnetflix_titles.csv\tdirector\t1\nmovies.csv\tdirector\tnetflix_titles.csv\tcast\t1\nmovies.csv\tcompany\tsong_data.csv\tsong_name\t1\nmovies.csv\tdirector\tNetflix_Shows.csv\ttitle\t1\nmovies.csv\tcompany\twikipedia-iso-country-codes.csv\tAlpha-3_code\t1\nmovies.csv\tcompany\twikipedia-iso-country-codes.csv\tEnglish_short_name_lower_case\t1\nmovies.csv\twriter\tfifa_ranking.csv\tcountry_full\t1\nmovies.csv\tstar\tmovie_metadata.csv\tmovie_title\t1\nmovies.csv\tstar\tacquisitions.csv\tCompany\t1\nmovies.csv\tcompany\tfifa_ranking.csv\tcountry_full\t1\nmovies.csv\tname\tnetflix_titles.csv\tcountry\t1\nmovies.csv\tcompany\tacquisitions.csv\tCompany\t1\nmovies.csv\twriter\tmovie_metadata.csv\tactor_1_name\t1\nmovies.csv\tdirector\tfifa_ranking.csv\tcountry_full\t1\nmovies.csv\tcompany\tus_companies.csv\turl\t1\nmovies.csv\tcompany\tcountries_of_the_world.csv\tCountry\t1\nmovies.csv\treleased\tus_companies.csv\tzipcode\t1\nmovies.csv\twriter\tsong_data.csv\tsong_name\t1\nmovies.csv\tcompany\tmovie_metadata.csv\tdirector_name\t1\nmovies.csv\tstar\tcountries_of_the_world.csv\tCountry\t1\nmovies.csv\tcompany\tmovie_metadata.csv\tactor_1_name\t1\nmovies.csv\tname\tacquisitions.csv\tBusiness\t1\nmovies.csv\tcompany\tNetflix_Shows.csv\ttitle\t1\nmovies.csv\tcompany\tacquisitions.csv\tDerivedProducts\t1\nmovies.csv\tdirector\tmovie_metadata.csv\tmovie_title\t1\nmovies.csv\treleased\twikipedia-iso-country-codes.csv\tEnglish_short_name_lower_case\t1\nmovies.csv\twriter\tmovie_metadata.csv\tmovie_title\t1\nmovies.csv\tcompany\tcountries_and_continents.csv\tofficial_name_fr\t1\nmovies.csv\treleased\tfifa_ranking.csv\tcountry_full\t1\nmovies.csv\tname\tmovie_metadata.csv\tmovie_title\t1\nmovies.csv\tcountry\tmovie_metadata.csv\tlanguage\t1\nmovies.csv\treleased\tmovie_metadata.csv\tdirector_name\t1\nmovies.csv\tdirector\tcountries_of_the_world.csv\tCountry\t1\nmovies.csv\tcompany\tfifa_ranking.csv\tcountry_abrv\t1\nmovies.csv\twriter\tacquisitions.csv\tDerivedProducts\t1\nmovies.csv\tname\tmovie_metadata.csv\tactor_1_name\t1\nmovies.csv\tstar\tmovie_metadata.csv\tactor_1_name\t1\nmovies.csv\tcompany\tacquisitions.csv\tBusiness\t1\nmovies.csv\tcountry\tfifa_ranking.csv\tcountry_abrv\t1\nmovies.csv\tdirector\tacquisitions.csv\tDerivedProducts\t1\nmovies.csv\twriter\tNetflix_Shows.csv\ttitle\t1\nmovies.csv\twriter\tnetflix_titles.csv\tcast\t1\nmovies.csv\tdirector\tmovie_metadata.csv\tactor_1_name\t1\nmovies.csv\twriter\tmovie_metadata.csv\tdirector_name\t1\nmovies.csv\tstar\tacquisitions.csv\tBusiness\t1\nmovies.csv\treleased\twho_suicide_statistics.csv\tcountry\t1\nmovies.csv\tdirector\tnetflix_titles.csv\ttitle\t1\nmovies.csv\treleased\tcountries_and_continents.csv\tEDGAR\t1\nmovies.csv\treleased\tcountries_and_continents.csv\tMARC\t0\nmovies.csv\tdirector\tcountries_and_continents.csv\tTLD\t0\nmovies.csv\tcompany\tCars93.csv\tRearseatroom\t0\nmovies.csv\trating\tcountries_and_continents.csv\tis_independent\t0\nmovies.csv\tgenre\tcountries_and_continents.csv\tDial\t0\nmovies.csv\tcountry\tstudent-mat.csv\tfamsup\t0\nmovies.csv\tstar\tcountries_and_continents.csv\tContinent\t0\nmovies.csv\trating\tcountries_and_continents.csv\tIOC\t0\nmovies.csv\tcountry\tmovie_metadata.csv\tactor_1_name\t0\nmovies.csv\treleased\tCars93.csv\tModel\t0\nmovies.csv\tcountry\tstudent-mat.csv\tinternet\t0\nmovies.csv\tgenre\tacquisitions.csv\tBusiness\t0\nmovies.csv\tcountry\tus_companies.csv\tzipcode\t0\nmovies.csv\tname\tcountries_and_continents.csv\tofficial_name_en\t0\nmovies.csv\tcountry\tus_companies.csv\tdescription\t0\nmovies.csv\tname\tcountries_and_continents.csv\tis_independent\t0\nmovies.csv\tname\tus_companies.csv\texampleuses\t0\nmovies.csv\tdirector\tCars93.csv\tCylinders\t0\nmovies.csv\trating\tus_companies.csv\tfinancialinfo\t0\nmovies.csv\twriter\tmovie_metadata.csv\tcolor\t0\nmovies.csv\trating\tnetflix_titles.csv\trelease_year\t0\nmovies.csv\treleased\tnetflix_titles.csv\tdescription\t0\nmovies.csv\tcompany\tnetflix_titles.csv\trating\t0\nmovies.csv\tcompany\tus_companies.csv\tdescription\t0\nmovies.csv\tgenre\tstudent-mat.csv\tnursery\t0\nmovies.csv\tname\tcountries_and_continents.csv\tFIFA\t0\nmovies.csv\twriter\tus_companies.csv\tdescriptionshort\t0\nmovies.csv\tcountry\tcountries_and_continents.csv\tis_independent\t0\nmovies.csv\tgenre\tnetflix_titles.csv\tlisted_in\t0\nmovies.csv\tdirector\tus_companies.csv\tcountry\t0\n"
+          },
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"result-alert alert-warning\" role\u003d\"alert\"\u003e\u003cbutton type\u003d\"button\" class\u003d\"close\" data-dismiss\u003d\"alert\" aria-label\u003d\"Close\"\u003e\u003cspan aria-hidden\u003d\"true\"\u003e\u0026times;\u003c/span\u003e\u003c/button\u003e\u003cstrong\u003eOutput is truncated\u003c/strong\u003e to 140 rows. Learn more about \u003cstrong\u003ezeppelin.spark.maxResult\u003c/strong\u003e\u003c/div\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593120776250_476317504",
+      "id": "paragraph_1593120776250_476317504",
+      "dateCreated": "2020-06-25 23:32:56.250",
+      "dateStarted": "2020-06-28 17:22:44.115",
+      "dateFinished": "2020-06-28 17:27:14.194",
+      "status": "FINISHED"
+    },
+    {
+      "user": "anonymous",
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593331213936_206442157",
+      "id": "paragraph_1593331213936_206442157",
+      "dateCreated": "2020-06-28 10:00:13.936",
+      "status": "READY"
+    },
+    {
+      "text": "\n\nval resultsQA \u003d FQJ.getLastAttDiscovery(queryDataset)\n\nprintln(s\"\\n\\nThe number of pairs generated for query-by-attribute is: ${resultsQA.count}\")\n\nz.show(resultsQA.groupBy(\"prediction\").agg(count(\"*\").as(\"number of attribute pairs\")))",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-29 00:10:32.696",
+      "config": {
+        "colWidth": 6.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "prediction": "string",
+                      "cnt": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default",
+                  "stacked": false
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "prediction",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "cnt",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          },
+          "1": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "prediction": "string",
+                      "number of attribute pairs": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "prediction",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "number of attribute pairs",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\n\nThe number of pairs generated for query-by-attribute is: 112\n\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "prediction\tnumber of attribute pairs\n4\t6\n2\t3\n1\t7\n0\t96\n"
+          },
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mresultsQA\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m \u003d [ds_name: string, att_name: string ... 3 more fields]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593330453020_-1529319518",
+      "id": "paragraph_1593330453020_-1529319518",
+      "dateCreated": "2020-06-28 09:47:33.022",
+      "dateStarted": "2020-06-29 00:10:22.472",
+      "dateFinished": "2020-06-29 00:10:23.062",
+      "status": "FINISHED"
+    },
+    {
+      "text": "val resultsQD \u003d FQJ.getLastDatasetDiscovery(queryDataset)\n\nprintln(s\"\\n\\nThe number of pairs generated for query-by-dataset is: ${resultsQD.count}\")\n\n\n\nz.show(resultsQD.groupBy(\"prediction\").agg(count(\"*\").as(\"number of attribute pairs\")))",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-29 00:11:03.362",
+      "config": {
+        "colWidth": 6.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "prediction": "string",
+                      "cnt": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "prediction",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "cnt",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          },
+          "1": {
+            "graph": {
+              "mode": "multiBarChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "prediction",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "number of attribute pairs",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\n\nThe number of pairs generated for query-by-dataset is: 1008\n\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "prediction\tnumber of attribute pairs\n4\t6\n3\t3\n2\t3\n1\t98\n0\t898\n"
+          },
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mresultsQD\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m \u003d [ds_name: string, att_name: string ... 3 more fields]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593330974571_-252276331",
+      "id": "paragraph_1593330974571_-252276331",
+      "dateCreated": "2020-06-28 09:56:14.572",
+      "dateStarted": "2020-06-29 00:10:53.001",
+      "dateFinished": "2020-06-29 00:10:53.773",
+      "status": "FINISHED"
+    },
+    {
+      "user": "anonymous",
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593331121134_-651753024",
+      "id": "paragraph_1593331121134_-651753024",
+      "dateCreated": "2020-06-28 09:58:41.134",
+      "status": "READY"
+    }
+  ],
+  "name": "Finding Quality Joins Demo",
+  "id": "2FDQFS1HH",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false
+  },
+  "info": {}
+}
